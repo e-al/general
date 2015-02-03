@@ -275,10 +275,11 @@ globalkeys = awful.util.table.join(
     	    --awful.util.spawn( 'cp /home/e-al/*.png /home/e-al/images/screenshots' )
     end),
     awful.key( { modkey, }, "F1", function() awful.util.spawn( 'firefox' ) end), 
-    awful.key( { modkey, }, "F2", function() awful.util.spawn( 'leafpad' ) end),
-    awful.key( { modkey, }, "F3", function() awful.util.spawn( 'qutim' )  end),
+    awful.key( { modkey, }, "F2", function() awful.util.spawn( 'qtcreator' ) end),
+    awful.key( { modkey, }, "F3", function() awful.util.spawn( 'pidgin' )  end),
     awful.key( { modkey, }, "F4", function() awful.util.spawn( 'sakura -e ncmpcpp' ) end),
-    awful.key( { modkey, }, "F5", function() awful.util.spawn( 'qtcreator' ) end),
+    awful.key( { modkey, }, "F5", function() awful.util.spawn( 'leafpad' ) end),
+    awful.key( { modkey, }, "F6", function() awful.util.spawn( 'qbittorrent' ) end),
 
 -- Ping
 awful.key( { modkey, }, "p", function() awful.util.spawn( 'sakura -e "ping ya.ru"' ) end) 
@@ -378,7 +379,9 @@ awful.rules.rules = {
       properties = { tag = tags[1][1] } },
     { rule = { class = "Qbittorrent" },
       properties = { tag = tags[1][6] } },
-    { rule = { class = "qutim" },
+    { rule = { class = "QtCreator" },
+      properties = { tag = tags[1][2] } },
+    { rule = { class = "Pidgin" },
       properties = { tag = tags[1][3] } },
 
 
