@@ -1,0 +1,104 @@
+
+[input-lbl]
+0=Media
+1=Windows
+
+[input-pth]
+0=/media
+1=/mnt/windows
+
+[inpmc.fm.mkdir]
+0=Videos
+1=snake
+
+[mc.shared.search]
+0=c
+
+[cmdline]
+0=cd /media
+1=cd
+2=pmount /dev/sdb1
+3=`
+4=mkdir Books
+5=libreoffice time_table\\(2\\).xls 
+6=cd Projects/
+7=gqview Python.jpg 
+8=python 
+9=cd /
+10=mkdir snake
+11=s
+12=cd ~
+13=chmod +x make.sh 
+14=[21~
+15=libreoffice отчёт2.odt 
+16=
+
+[Dir Hist New Left Panel]
+0=/mnt
+1=/home/e-al/images
+2=/media/sdb1/documents
+3=/media/sdb1/Books
+4=/mnt/windows
+5=/mnt/windows/Documents and Settings
+6=/mnt/windows/Documents and Settings/e-al
+7=/mnt/windows/Documents and Settings/e-al/Downloads
+8=/home/e-al/Projects/snake
+9=/home/e-al/snake
+10=/home/e-al/Projects
+11=/home/e-al
+12=/home
+13=/
+14=/media
+15=/media/sdb1
+
+[Dir Hist New Right Panel]
+0=/home/e-al/Projects/Computer Security
+1=/mnt/windows
+2=/mnt/windows/Books
+3=/home/e-al/Projects/Publishing
+4=/home/e-al/lab2
+5=/home/e-al/University/Algorithms
+6=/home/e-al/University
+7=/
+8=/media/sdd1
+9=/media/sdc1
+10=/media
+11=/media/sdb1/prog
+12=/media/sdb1
+13=/media/sdb1/snake
+14=/home/e-al
+15=/home/e-al/Projects
+
+[:unselect_cmd: Unselect ]
+0=
+
+[input-def]
+0=*
+
+[input2]
+0=/home/e-al/.config/awesome/
+1=/mnt/windows/
+2=/home/e-al/images/
+3=/media/sdc1/
+4=/home/e-al/lab2/
+5=/home/e-al/qBT_dir/DoctorWho.s06.WEB-DLRip.Rus-Eng.BaibaKo.tv/
+6=/media/sdb1/documents/
+7=/media/sdb1/Books/
+8=/media/sdb1/Videos/
+9=/home/e-al/Docs/Python/
+10=/home/e-al/Projects/Publishing/
+11=/home/e-al/Books/
+12=/mnt/windows/Books/
+13=/home/e-al/qBT_dir/
+14=/home/e-al/University/Помехкод/
+15=/home/e-al/University/Algorithms/
+16=/mnt/windows/University/Algorithms/
+17=/home/e-al/Snake/
+18=/home/e-al/Projects/snake/
+19=/home/e-al/snake/
+20=/home/e-al/Projects/
+21=/home/e-al/
+22=/media/sdb1/
+23=/home/e-al/syscontrol/audio/
+24=/home/e-al/syscontrol/audio/audio0/
+25=/media/sdb1/Video/

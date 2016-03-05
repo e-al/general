@@ -1,0 +1,4 @@
+ENTRY "Media" URL "/media"
+ENTRY "Windows" URL "/mnt/windows"
+ENTRY "Dropbox" URL "/home/e-al/Dropbox"
+ENTRY "Downloads" URL "/home/e-al/Downloads"
