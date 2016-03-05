@@ -10,6 +10,8 @@ local beautiful = require("beautiful")
 -- Notification library
 local naughty = require("naughty")
 local menubar = require("menubar")
+-- Keyboard switcher
+local kbdd = require("kbdd")
 
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
@@ -112,6 +114,9 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 -- {{{ Wibox
 -- Create a textclock widget
 mytextclock = awful.widget.textclock()
+mytextbox = wibox.widget.textbox()
+mykbdtextbox = kbdd.kbdtextbox()
+mycustomwibox = wibox.widget.imagebox()
 
 -- Create a wibox for each screen and add it
 mywibox = {}
@@ -190,6 +195,8 @@ for s = 1, screen.count() do
     -- Widgets that are aligned to the right
     local right_layout = wibox.layout.fixed.horizontal()
     if s == 1 then right_layout:add(wibox.widget.systray()) end
+    right_layout:add(mycustomwibox)
+    right_layout:add(mykbdtextbox)
     right_layout:add(mytextclock)
     right_layout:add(mylayoutbox[s])
 
@@ -280,17 +287,27 @@ globalkeys = awful.util.table.join(
     awful.key( { modkey, }, "F4", function() awful.util.spawn( 'sakura -e ncmpcpp' ) end),
     awful.key( { modkey, }, "F5", function() awful.util.spawn( 'leafpad' ) end),
     awful.key( { modkey, }, "F6", function() awful.util.spawn( 'qbittorrent' ) end),
+    awful.key( { modkey, }, "F11", 
+                function() 
+                    term_command = "sakura -x"
+                    ssh_command = "ssh -i /home/e-al/.ssh/srg-sdn.pem ubuntu@192.17.177.17"
+                    for i=2,4 do 
+                        new_ssh_command = ssh_command .. i
+                        command = term_command .. " " .. "'" .. new_ssh_command .. "'"
+                        awful.util.spawn(command)
+                    end
+                end),
 
 -- Ping
-awful.key( { modkey, }, "p", function() awful.util.spawn( 'sakura -e "ping ya.ru"' ) end) 
+awful.key( { modkey, }, "p", function() awful.util.spawn( 'sakura -e "ping ya.ru"' ) end),
 
 -- Мультимедиа клавиши
-   -- awful.key( {}, "#174", function() awful.util.spawn ( 'mpc stop' ) end),
-   -- awful.key( {}, "#172", function() awful.util.spawn ( 'mpc toggle' ) end),
-   -- awful.key( {}, "#173", function() awful.util.spawn ( 'mpc prev' ) end),
-   -- awful.key( {}, "#171", function() awful.util.spawn ( 'mpc next' ) end),
-   -- awful.key( {}, "#122", function() awful.util.spawn ( 'amixer -c 0 set PCM 2dB-' ) end),
-   -- awful.key( {}, "#123", function() awful.util.spawn ( 'amixer -c 0 set PCM 2dB+' ) end)
+   awful.key( {}, "XF86AudioStop", function() awful.util.spawn ( 'playerctl stop' ) end),
+   awful.key( {}, "XF86AudioPlay", function() awful.util.spawn ( 'playerctl play-pause' ) end),
+   awful.key( {}, "XF86AudioPrev", function() awful.util.spawn ( 'playerctl previous' ) end),
+   awful.key( {}, "XF86AudioNext", function() awful.util.spawn ( 'playerctl next' ) end)
+   --awful.key( {}, "#122", function() awful.util.spawn ( 'amixer -c 0 set PCM 2dB-' ) end),
+   --awful.key( {}, "#123", function() awful.util.spawn ( 'amixer -c 0 set PCM 2dB+' ) end)
 
 )
 clientkeys = awful.util.table.join(
@@ -460,8 +477,9 @@ awful.util.spawn_with_shell("x=" .. prg .. "; pgrep -u $USERNAME -x " .. prg .. 
 end
 
 -- Autorun programms
-run_once("sbxkb")
+run_once("kbdd -n")
 run_once("xcompmgr")
+run_once("xbindkeys")
 
 -- }}}
 
@@ -495,7 +513,7 @@ function add_calendar(inc_offset)
         timeout = 0, hover_timeout = 0.5,
         width = 160,
         })
-        end
+end
         
         mytextclock:connect_signal("mouse::enter", function ()
         add_calendar(0)
@@ -517,3 +535,72 @@ function add_calendar(inc_offset)
 client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
 client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 -- }}}
+--
+--
+
+function get_wifi_level()
+    local maxlevel = 70
+    local level = awful.util.pread("awk 'NR==3 {print $3}' /proc/net/wireless | cut -d'.' -f1")
+    if string.len(level) == 0 then return 0 end
+    return level / maxlevel * 100
+end
+
+function set_wifi_icon(wifi_icon)
+    wifi_level = get_wifi_level()
+    if wifi_level >= 50 then
+        wifi_icon:set_image("/home/e-al/images/icons/wifi_max.png")
+    elseif wifi_level < 50 and wifi_level >= 20 then
+        wifi_icon:set_image("/home/e-al/images/icons/wifi_mid.png")
+    elseif wifi_level > 0 and wifi_level < 20 then
+        wifi_icon:set_image("/home/e-al/images/icons/wifi_min.png")
+    else
+        -- no wifi 
+        wifi_icon:set_image("/home/e-al/images/icons/wifi_no.png")
+    end
+end
+
+
+local wireless_info = nil
+
+function remove_wireless_info()
+    if wireless_info ~= nil then
+        naughty.destroy(wireless_info)
+        wireless_info = nil
+    end
+end
+
+function add_wireless_info()
+    local current_network = awful.util.pread("iwconfig wlp3s0 | awk 'NR==1 { split($4, name, \":\"); print name[2] }'")
+    local wifi_level = math.ceil(get_wifi_level())
+    if wifi_level == 0 then
+        current_network = "Not connected\n"
+    end
+
+    local connection_info = "Connected to: " .. current_network
+    connection_info = connection_info .. "Signal level: " .. wifi_level .. "%" 
+    wireless_info = naughty.notify({
+        bg = "#000000",
+        fg = "#ffffff",
+        position = "bottom_right",
+        text = string.format('<span font_desc="%s">%s</span>', "Roboto", connection_info),
+        timeout = 0, hover_timeout = 0.5,
+        width = 160,
+        border_width = 0,
+        })
+end
+
+mycustomwibox:connect_signal("mouse::enter", function ()
+add_wireless_info()
+end)
+
+mycustomwibox:connect_signal("mouse::leave", function ()
+remove_wireless_info()
+end)
+
+wireless_update_timer = timer({ timeout = 1 })
+wireless_update_timer:connect_signal("timeout", function() set_wifi_icon(mycustomwibox) end)
+wireless_update_timer:start()
+
+--mytimer = timer({ timeout = 1 })
+--mytimer:connect_signal("timeout", function() mytextbox:set_text("Hello awesome world!") end)
+--mytimer:start()
